@@ -1,0 +1,88 @@
+customer [icon: user, color: Green] {
+  customer_id SERIAL pk
+  first_name VARCHAR(20) not null
+  last_name VARCHAR(20) not null
+  email VARCHAR(40) unique not null
+  phone_number CHAR(15)
+  WhatsApp_number CHAR(15)
+  instagram_handle VARCHAR(30) unique not null
+}
+product [icon: package, color: yellow] {
+  product_id SERIAL pk
+  name VARCHAR(50) not null
+  description TEXT 
+  cost_price DECIMAL(10,2)
+  selling_price DECIMAL(10,2)
+  type ENUM ('thrifted', 'handmade')
+
+  customer_id fk
+}
+
+orders [icon: shopping-cart, color: purple] {
+  order_id SERIAL pk
+  name VARCHAR(50) not null
+  description TEXT 
+  order_status ENUM(order_pending,order_recieved, delivered, cancelld )
+  order_date timestamp
+
+  customer_id fk
+
+}
+payments [icon: currency, color: red]{
+  payment_id serial pk
+  order_id int fk
+  amount decimal(10,2)
+  payment_status enum(paid, failed)
+  payment_method enum(UPI, card, Cash on delivery)
+  payment_txn_id varchar(150)
+  payment_date timestamp
+}
+
+
+inventory [icon: database, color: blue] {
+  inventory_id serial pk
+  product_id int fk
+  size varchar(20)
+  color varchar(30)
+  quantity int
+
+  price decimal(10,2)
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+order_items [icon: list, color: orange] {
+  items_id serial pk
+  order_id int fk
+  inventory_id int fk
+  quantity int
+
+  price_at_time decimal(10,2)
+}
+
+shipping [icon: truck, color: green] {
+  shipping_id serial pk
+  order_id int fk
+  address TEXT not null
+  city VARCHAR(50)
+  tracking_number VARCHAR(100)
+  courier_service VARCHAR(50)
+  shipping_date timestamp
+}
+
+customer.customer_id < orders.customer_id
+
+product.product_id < inventory.product_id
+
+orders.order_id  < order_items.order_id
+
+inventory.inventory_id < order_items.inventory_id
+
+orders.order_id < payments.order_id
+
+orders.order_id < shipping.order_id
+
+orders.order_id - payments.order_id
+
+orders.order_id - shipping.order_id
